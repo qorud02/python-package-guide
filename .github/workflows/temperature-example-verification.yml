@@ -20,11 +20,11 @@ jobs:
       - name: Hatch example tests
         env:
           PYTHONPATH: examples/pure-hatch/src
-        run: python -m pytest examples/pure-hatch/tests -q
+        run: python -m pytest -p no:cacheprovider examples/pure-hatch/tests -q
       - name: Setuptools example tests in a fresh interpreter
         env:
           PYTHONPATH: examples/pure-setuptools/src
-        run: python -m pytest examples/pure-setuptools/tests -q
+        run: python -m pytest -p no:cacheprovider examples/pure-setuptools/tests -q
       - name: Changed test lint
         run: python -m ruff check examples/pure-hatch/tests/examplePy/test_temperature.py examples/pure-setuptools/tests/examplePy/test_temperature.py
       - name: Required strict documentation build
