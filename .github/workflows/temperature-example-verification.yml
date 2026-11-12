@@ -1,0 +1,31 @@
+name: Verify temperature examples and guide
+on:
+  push:
+    branches: [codex/verify-temperature-examples-20261112]
+permissions:
+  contents: read
+jobs:
+  examples-and-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test and documentation tools
+        run: python -m pip install -e '.[dev]' pytest numpy pandas ruff uv
+      - name: Hatch example tests
+        env:
+          PYTHONPATH: examples/pure-hatch/src
+        run: python -m pytest examples/pure-hatch/tests -q
+      - name: Setuptools example tests in a fresh interpreter
+        env:
+          PYTHONPATH: examples/pure-setuptools/src
+        run: python -m pytest examples/pure-setuptools/tests -q
+      - name: Changed test lint
+        run: python -m ruff check examples/pure-hatch/tests/examplePy/test_temperature.py examples/pure-setuptools/tests/examplePy/test_temperature.py
+      - name: Required strict documentation build
+        run: nox -e docs-test
